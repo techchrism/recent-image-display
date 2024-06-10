@@ -17,6 +17,8 @@ async function main() {
     }).on('change', async path => {
         console.log(`File ${path} has been changed`)
         const buffer = await fs.readFile(path)
+        if(buffer.length === 0) return
+
         wss.clients.forEach(client => {
             if(client.readyState === 1) {
                 client.send(JSON.stringify({
