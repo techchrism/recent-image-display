@@ -1,5 +1,5 @@
-import {Component, createSignal, For} from 'solid-js'
-import {VsClearAll, VsClose} from 'solid-icons/vs'
+import {Component, createSignal, For, Show} from 'solid-js'
+import {VsClearAll} from 'solid-icons/vs'
 import CopyButton from './CopyButton'
 import {IoClose} from 'solid-icons/io'
 
@@ -14,8 +14,11 @@ interface ImageEntry {
     dataUrl: string
 }
 
+const websocketUrl = 'ws://localhost:3010'
+
 const App: Component = () => {
     const [imageEntries, setImageEntries] = createSignal<ImageEntry[]>([])
+    const [websocketConnected, setWebsocketConnected] = createSignal(false)
     let tempImageMeta: MetaDataFormat | undefined
 
     const onImageData = (data: Blob) => {
@@ -41,7 +44,7 @@ const App: Component = () => {
     }
 
     const connectWebsocket = () => {
-        const ws = new WebSocket('ws://localhost:3010')
+        const ws = new WebSocket(websocketUrl)
         ws.onmessage = event => {
             const data = event.data
             if(data instanceof ArrayBuffer) {
@@ -53,7 +56,12 @@ const App: Component = () => {
             }
         }
 
+        ws.onopen = () => {
+            setWebsocketConnected(true)
+        }
+
         ws.onclose = () => {
+            setWebsocketConnected(false)
             setTimeout(() => {
                 connectWebsocket()
             }, 1000)
@@ -73,6 +81,13 @@ const App: Component = () => {
                     </button>
                 </div>
             </div>
+            <Show when={!websocketConnected()}>
+                <div class="text-3xl text-center my-5 font-semibold">
+                    Connecting to
+                    <pre class="bg-base-200">{websocketUrl}</pre>
+                    <span class="loading loading-spinner loading-lg"/>
+                </div>
+            </Show>
             <div class="flex flex-col gap-2">
                 <For each={imageEntries()}>
                     {({meta, dataUrl}, index) => (
