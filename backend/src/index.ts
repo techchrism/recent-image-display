@@ -5,8 +5,8 @@ import {WebSocketServer} from 'ws'
 import path from 'node:path'
 
 async function main() {
-    const pdfDir = process.env['PDF_DIR']
-    if(pdfDir === undefined) throw new Error('Environment variable PDF_DIR not set')
+    const pdfDir = process.env['IMAGE_DIR']
+    if(pdfDir === undefined) throw new Error('Environment variable IMAGE_DIR not set')
     const serverPort = 3010
 
     const wss = new WebSocketServer({port: serverPort})
