@@ -20,7 +20,6 @@
     "vite-plugin-solid": "^2.8.2"
   },
   "dependencies": {
-    "pdfjs-dist": "^4.3.136",
     "solid-icons": "^1.1.0",
     "solid-js": "^1.8.11"
   }
